@@ -26,7 +26,7 @@ namespace AiraAPI.Repositories
 
            
             request.Content = new StringContent($"{{\n  \"model\": \"deepseek/deepseek-chat:free\",\n  \"messages\": [\n    {{\n      \"role\": \"user\",\n      \"content\": \"{client_message.Content}\"\n    }}\n  ],\n \"stream\": true  \n}}");
-            request.Content.Headers.ContentType = new MediaTypeHeaderValue("text/event-stream");
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             HttpResponseMessage response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
