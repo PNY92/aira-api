@@ -7,10 +7,21 @@ using System.Text;
 
 namespace AiraAPI.Repositories
 {
-    public class OpenRouterRepository : IOpenRouterRepository
+    public class OpenRouterClient : IOpenRouterClient
     {
 
         private string _apiKey = "";
+        private readonly HttpClient _httpClient;
+
+        public delegate void CompleteResponse();
+
+        public event CompleteResponse OnResponseCompleted;
+
+        public OpenRouterClient(string apiKey)
+        {
+            _apiKey = apiKey;
+            _httpClient = new HttpClient();
+        }
 
         public async IAsyncEnumerable<Message> GenerateMessageAsync(Message client_message)
         {
@@ -20,13 +31,12 @@ namespace AiraAPI.Repositories
                 throw new Exception("API Key is not set");
             }
 
-            using HttpClient client = new HttpClient();
             using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "https://openrouter.ai/api/v1/chat/completions");
 
             request.Headers.Add("Authorization", "Bearer " + _apiKey);
             request.Content = new StringContent($@"
             {{
-                ""model"": ""deepseek/deepseek-chat:free"",
+                ""model"": ""{client_message.Model}"",
                 ""messages"": [
                     {{
                         ""role"": ""user"",
@@ -36,7 +46,7 @@ namespace AiraAPI.Repositories
                 ""stream"": true
             }}", Encoding.UTF8, "application/json");
 
-            using HttpResponseMessage response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            using HttpResponseMessage response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
 
             using Stream stream = await response.Content.ReadAsStreamAsync();
@@ -48,9 +58,16 @@ namespace AiraAPI.Repositories
                 if (!string.IsNullOrWhiteSpace(line) && line.StartsWith("data: "))
                 {
                     string json = line.Substring(6).Trim();
-                    if (json == "[DONE]") break; // OpenAI-style end signal
 
-                    var responseObject = JsonConvert.DeserializeObject<Response>(json);
+                    if (json == "[DONE]")
+                    { // OpenAI-style end signal
+                        OnResponseCompleted?.Invoke();
+                        break;
+                    } 
+
+                    
+
+                    Response responseObject = JsonConvert.DeserializeObject<Response>(json);
                     if (responseObject?.Choices != null && responseObject.Choices.Count > 0)
                     {
                         if (responseObject.Choices[0].Delta.Content != null)
@@ -64,11 +81,6 @@ namespace AiraAPI.Repositories
             }
 
             yield return new Message();
-        }
-
-        public void SetAPIKey(string api_key)
-        {
-            _apiKey = api_key;
         }
     }
 }
