@@ -2,6 +2,6 @@
 {
     public class Choices
     {
-        public Message Message { get; set; }
+        public Message Delta { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using AiraAPI.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace AiraAPI.Repositories
 {
@@ -11,31 +12,58 @@ namespace AiraAPI.Repositories
 
         private string _apiKey = "";
 
-        public async Task<Message> GenerateMessageAsync(Message client_message)
+        public async IAsyncEnumerable<Message> GenerateMessageAsync(Message client_message)
         {
 
-            if (_apiKey == null) {
+            if (string.IsNullOrEmpty(_apiKey))
+            {
                 throw new Exception("API Key is not set");
             }
-            
-            HttpClient client = new HttpClient();
 
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "https://openrouter.ai/api/v1/chat/completions");
+            using HttpClient client = new HttpClient();
+            using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "https://openrouter.ai/api/v1/chat/completions");
 
             request.Headers.Add("Authorization", "Bearer " + _apiKey);
+            request.Content = new StringContent($@"
+            {{
+                ""model"": ""deepseek/deepseek-chat:free"",
+                ""messages"": [
+                    {{
+                        ""role"": ""user"",
+                        ""content"": ""{client_message.Content}""
+                    }}
+                ],
+                ""stream"": true
+            }}", Encoding.UTF8, "application/json");
 
-           
-            request.Content = new StringContent($"{{\n  \"model\": \"deepseek/deepseek-chat:free\",\n  \"messages\": [\n    {{\n      \"role\": \"user\",\n      \"content\": \"{client_message.Content}\"\n    }}\n  ],\n \"stream\": true  \n}}");
-            request.Content.Headers.ContentType = new MediaTypeHeaderValue("text/event-stream");
-
-            HttpResponseMessage response = await client.SendAsync(request);
+            using HttpResponseMessage response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
 
-            string responseBody = await response.Content.ReadAsStringAsync();
-            
-            Response respondedMessage = JsonConvert.DeserializeObject<Response>(responseBody);
+            using Stream stream = await response.Content.ReadAsStreamAsync();
+            using StreamReader reader = new StreamReader(stream);
 
-            return respondedMessage.Choices[0].Message;
+            while (!reader.EndOfStream)
+            {
+                string line = await reader.ReadLineAsync();
+                if (!string.IsNullOrWhiteSpace(line) && line.StartsWith("data: "))
+                {
+                    string json = line.Substring(6).Trim();
+                    if (json == "[DONE]") break; // OpenAI-style end signal
+
+                    var responseObject = JsonConvert.DeserializeObject<Response>(json);
+                    if (responseObject?.Choices != null && responseObject.Choices.Count > 0)
+                    {
+                        if (responseObject.Choices[0].Delta.Content != null)
+                        {
+                            yield return responseObject.Choices[0].Delta;
+                        }
+                        
+                        
+                    }
+                }
+            }
+
+            yield return new Message();
         }
 
         public void SetAPIKey(string api_key)

@@ -1,6 +1,6 @@
 @AiraAPI_HostAddress = http://localhost:5091
 
-GET {{AiraAPI_HostAddress}}/weatherforecast/
+GET {{AiraAPI_HostAddress}}
 Accept: application/json
 
 ###

@@ -7,7 +7,7 @@ namespace AiraAPI.Interfaces
 
         public void SetAPIKey(string api_key);
 
-        public Task<Message> GenerateMessageAsync(Message client_message);
+        public IAsyncEnumerable<Message> GenerateMessageAsync(Message client_message);
 
 
     }
