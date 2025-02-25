@@ -13,37 +13,31 @@ namespace AiraAPI.Controllers
     public class APIController : Controller
     {
 
-        [HttpGet("get")]
-        public async Task Index()
+        [HttpPost("generate")]
+        public async Task Generate([FromBody] Message chatMessage)
         {
+
             Response.Headers.Add("Content-Type", "text/event-stream");
             Response.Headers.Add("Cache-Control", "no-cache");
             Response.Headers.Add("Connection", "keep-alive");
 
             var responseStream = Response.Body;
 
+            JObject configManager = ConfigManager.GetConfiguration();
+            string key = configManager["openrouter"]["deepseek_v3_api"].ToString();
+
+            OpenRouterClient openRouterRepository = new OpenRouterClient(key);
+
+            openRouterRepository.OnResponseCompleted += () =>
+            {
+                Console.WriteLine("\nResponse Completed.");
+            };
+
             await using (StreamWriter writer = new StreamWriter(responseStream, Encoding.UTF8, leaveOpen: true))
             {
-                Message chat = new Message()
+
+                await foreach (var chunk in openRouterRepository.GenerateMessageAsync(chatMessage))
                 {
-                    Content = "Can you explain what is delegate in C#?",
-                    Model = "deepseek/deepseek-chat:free",
-                    Role = "User"
-                };
-
-                JObject configManager = ConfigManager.GetConfiguration();
-                string key = configManager["openrouter"]["deepseek_v3_api"].ToString();
-
-                OpenRouterClient openRouterRepository = new OpenRouterClient(key);
-
-                openRouterRepository.OnResponseCompleted += () =>
-                {
-                    Console.WriteLine("\nResponse Completed.");
-                };
-
-                await foreach (var chunk in openRouterRepository.GenerateMessageAsync(chat))
-                {
-                    Console.Write(chunk.Content);
                     if (!string.IsNullOrEmpty(chunk.Content))
                     {
                         
