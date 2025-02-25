@@ -18,5 +18,5 @@ An open-source API server dedicated for handling researching tasks as Research A
 
 ## Generate a prompt
 ```cmd
-curl --location "http://localhost:5000/api/generate" --H "Content-Type: application/json" --H "Accept: text/event-stream" --d "{\"role\": \"user\",\"model\": \"deepseek/deepseek-chat:free\",\"content\": \"What is the purpose of life\"}"
+curl --location "http://localhost:5000/api/generate" -H "Content-Type: application/json" -H "Accept: text/event-stream" -d "{\"role\": \"user\",\"model\": \"deepseek/deepseek-chat:free\",\"content\": \"What is the purpose of life\"}"
 ```
