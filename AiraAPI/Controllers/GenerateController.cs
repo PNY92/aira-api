@@ -10,7 +10,7 @@ namespace AiraAPI.Controllers
 {
     [ApiController]
     [Route("api")]
-    public class APIController : Controller
+    public class GenerateController : Controller
     {
 
         [HttpPost("generate")]
