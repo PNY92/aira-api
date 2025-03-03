@@ -26,5 +26,25 @@ namespace AiraAPI.Controllers
             User user = await fireBaseRepository.GetUserAsync();
             return new JsonResult(user);
         }
+
+        [HttpGet("update")]
+        public async Task<IActionResult> Update()
+        {
+            Response.Headers.ContentType = "application/json";
+
+            FireBaseRepository fireBaseRepository = new FireBaseRepository(_firebaseConfig);
+            User user = await fireBaseRepository.GetUserAsync();
+            return new JsonResult(user);
+        }
+
+        [HttpGet("delete")]
+        public async Task<IActionResult> Delete()
+        {
+            Response.Headers.ContentType = "application/json";
+
+            FireBaseRepository fireBaseRepository = new FireBaseRepository(_firebaseConfig);
+            User user = await fireBaseRepository.GetUserAsync();
+            return new JsonResult(user);
+        }
     }
 }

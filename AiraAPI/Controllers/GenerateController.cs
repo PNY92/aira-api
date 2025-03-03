@@ -16,6 +16,7 @@ namespace AiraAPI.Controllers
         [HttpPost("generate")]
         public async Task Generate([FromBody] Message chatMessage)
         {
+            chatMessage.Content += "\n\nPlease respond as a research assistant and provide accurate response";
 
             Response.Headers.Add("Content-Type", "text/event-stream");
             Response.Headers.Add("Cache-Control", "no-cache");
