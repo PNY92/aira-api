@@ -1,0 +1,14 @@
+{
+  "developer_mode": true,
+
+  "enable_firebase": true,
+
+  "firebase_config": {
+    "apiKey": "FIREBASEAPIKEYGOES_HERE",
+    "basePath": "https://xxxx-xxxx-default-rtdb.asia-southeast1.firebasedatabase.app/"
+  },
+
+  "openrouter": {
+    "deepseek_v3_api": "sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  }
+}
