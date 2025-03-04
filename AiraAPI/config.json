@@ -4,11 +4,11 @@
   "enable_firebase": true,
 
   "firebase_config": {
-    "apiKey": "ixKut4AqAzkCFMQsaSRpsqVRa5XJBKB8yNjd4Zoa",
-    "basePath": "https://aira-api-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    "apiKey": "FIREBASEAPIKEYGOES_HERE",
+    "basePath": "https://xxxx-xxxx-default-rtdb.asia-southeast1.firebasedatabase.app/"
   },
 
   "openrouter": {
-    "deepseek_v3_api": "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"
+    "deepseek_v3_api": "sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
   }
 }
