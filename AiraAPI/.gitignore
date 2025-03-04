@@ -1,7 +1,7 @@
 # Build folders
 bin/
 obj/
-config.json
+config-dev.json
 
 # User-specific files
 *.user
