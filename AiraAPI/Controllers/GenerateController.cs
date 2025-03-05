@@ -37,7 +37,7 @@ namespace AiraAPI.Controllers
             await using (StreamWriter writer = new StreamWriter(responseStream, Encoding.UTF8, leaveOpen: true))
             {
 
-                await foreach (var chunk in openRouterRepository.GenerateMessageAsync(chatMessage))
+                await foreach (var chunk in openRouterRepository.GenerateStreamingMessageAsync(chatMessage))
                 {
                     if (!string.IsNullOrEmpty(chunk.Content))
                     {
@@ -49,6 +49,29 @@ namespace AiraAPI.Controllers
 
                 
             }
+
+        }
+        [HttpPost("source")]
+        public async Task<IActionResult> Source([FromBody] Message chatMessage)
+        {
+            chatMessage.Content += "\n\nPlease summarize the user prompt into 3 to 5 keywords so that we can use as search query for Semantic Scholar without comma, it must reflect the whole context of the user prompt";
+
+            Response.Headers.Add("Content-Type", "application/json");
+            Response.Headers.Add("Cache-Control", "no-cache");
+            Response.Headers.Add("Connection", "keep-alive");
+
+            var responseStream = Response.Body;
+
+            JObject configManager = ConfigManager.GetConfiguration();
+            string key = configManager["openrouter"]["deepseek_v3_api"].ToString();
+
+            OpenRouterClient openRouterRepository = new OpenRouterClient(key);
+
+            string content = await openRouterRepository.GenerateMessageAsync(chatMessage);
+            string formattedContent = content.Replace(" ", "%20");
+
+            
+            return Ok(formattedContent);
 
         }
     }

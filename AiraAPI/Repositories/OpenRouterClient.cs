@@ -23,7 +23,7 @@ namespace AiraAPI.Repositories
             _httpClient = new HttpClient();
         }
 
-        public async IAsyncEnumerable<Message> GenerateMessageAsync(Message client_message)
+        public async IAsyncEnumerable<Message> GenerateStreamingMessageAsync(Message client_message)
         {
 
             if (string.IsNullOrEmpty(_apiKey))
@@ -34,6 +34,7 @@ namespace AiraAPI.Repositories
             using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "https://openrouter.ai/api/v1/chat/completions");
 
             request.Headers.Add("Authorization", "Bearer " + _apiKey);
+
             request.Content = new StringContent($@"
             {{
                 ""model"": ""{client_message.Model}"",
@@ -81,6 +82,38 @@ namespace AiraAPI.Repositories
             }
 
             yield return new Message();
+        }
+
+        public async Task<string> GenerateMessageAsync(Message client_message)
+        {
+            if (string.IsNullOrEmpty(_apiKey))
+            {
+                throw new Exception("API Key is not set");
+            }
+
+            using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "https://openrouter.ai/api/v1/chat/completions");
+
+            request.Headers.Add("Authorization", "Bearer " + _apiKey);
+
+            request.Content = new StringContent($@"
+            {{
+                ""model"": ""{client_message.Model}"",
+                ""messages"": [
+                    {{
+                        ""role"": ""user"",
+                        ""content"": ""{client_message.Content}""
+                    }}
+                ],
+            }}", Encoding.UTF8, "application/json");
+
+            using HttpResponseMessage response = await _httpClient.SendAsync(request);
+            var responsesCode = response.EnsureSuccessStatusCode();
+
+            string content = await responsesCode.Content.ReadAsStringAsync();
+            Console.WriteLine(content);
+            Response AI_Response = JsonConvert.DeserializeObject<Response>(content);
+
+            return AI_Response.Choices[0].Message.Content;
         }
     }
 }

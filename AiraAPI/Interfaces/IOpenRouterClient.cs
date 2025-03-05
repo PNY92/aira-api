@@ -4,8 +4,8 @@ namespace AiraAPI.Interfaces
 {
     public interface IOpenRouterClient
     {
-        public IAsyncEnumerable<Message> GenerateMessageAsync(Message client_message);
+        public IAsyncEnumerable<Message> GenerateStreamingMessageAsync(Message client_message);
 
-
+        public Task<string> GenerateMessageAsync(Message client_message);
     }
 }
