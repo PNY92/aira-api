@@ -4,12 +4,18 @@ An open-source API server dedicated for handling researching tasks as Research A
 ## Features
 * **Chat Function:** Generate response from AI Models provided from OpenRouter
 
+## Docker
+```docker pull -p 5000:8080 pny92/aira-api:latest```
+
 ## How to run API server
 * Start by configuring `config.json` to your preferred settings and API key
 * After starting `AiraAPI.exe`, you will be able to visit API sites using `http://127.0.0.1:5000/api/{action}`
 
 ## List of API sites
-* `http://127.0.0.1:5000/api/generate`
+* `http://127.0.0.1:5000/api/generate` POST
+* `http://127.0.0.1:5000/api/source` POST
+* `http://127.0.0.1:5000/api/paper/autocomplete` GET
+* `http://127.0.0.1:5000/api/paper/search` GET
 
 ## Model Library
 | Model Name | Calling Convention |

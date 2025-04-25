@@ -7,7 +7,7 @@ namespace AiraAPI.Models.Source
         public string Url { get; set; }
         public string Title { get; set; }
         public string Abstract { get; set; }
-        
+
         public OpenAccessPDF OpenAccessPDF { get; set; }
     }
 }

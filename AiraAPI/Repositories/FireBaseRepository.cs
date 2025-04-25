@@ -13,7 +13,8 @@ namespace AiraAPI.Repositories
         private IFirebaseConfig _config;
         private IFirebaseClient _client;
 
-        public FireBaseRepository(FirebaseConfig fireBaseConfig) {
+        public FireBaseRepository(FirebaseConfig fireBaseConfig)
+        {
             _config = fireBaseConfig;
             _client = new FirebaseClient(_config);
         }
@@ -33,7 +34,7 @@ namespace AiraAPI.Repositories
 
         public async Task SetUserAsync()
         {
-            
+
         }
 
         public async Task UpdateUserAsync()

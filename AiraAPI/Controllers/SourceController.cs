@@ -1,7 +1,6 @@
 ﻿using AiraAPI.Models.Source;
 using AiraAPI.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace AiraAPI.Controllers
 {

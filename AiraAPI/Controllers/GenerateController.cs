@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using AiraAPI.Models;
+﻿using AiraAPI.Models;
 using AiraAPI.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace AiraAPI.Controllers
@@ -41,13 +39,13 @@ namespace AiraAPI.Controllers
                 {
                     if (!string.IsNullOrEmpty(chunk.Content))
                     {
-                        
+
                         await writer.WriteAsync(chunk.Content);
                         await writer.FlushAsync();
                     }
                 }
 
-                
+
             }
 
         }
@@ -70,7 +68,7 @@ namespace AiraAPI.Controllers
             string content = await openRouterRepository.GenerateMessageAsync(chatMessage);
             string formattedContent = content.Replace(" ", "%20");
 
-            
+
             return Ok(formattedContent);
 
         }

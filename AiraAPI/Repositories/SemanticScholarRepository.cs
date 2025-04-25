@@ -8,7 +8,8 @@ namespace AiraAPI.Repositories
     public class SemanticScholarRepository : ISemanticScholarRepository
     {
         private HttpClient _httpClient;
-        public SemanticScholarRepository() {
+        public SemanticScholarRepository()
+        {
             _httpClient = new HttpClient();
         }
 
@@ -18,13 +19,14 @@ namespace AiraAPI.Repositories
 
             using HttpResponseMessage httpResponse = await _httpClient.SendAsync(request);
 
-            if (httpResponse.StatusCode == (System.Net.HttpStatusCode) 429)
+            if (httpResponse.StatusCode == (System.Net.HttpStatusCode)429)
             {
                 return new Paper();
             }
             HttpContent response = httpResponse.EnsureSuccessStatusCode().Content;
 
-            if (response == null) {
+            if (response == null)
+            {
                 throw new NullReferenceException("Response Content is null here");
             }
 
@@ -41,12 +43,13 @@ namespace AiraAPI.Repositories
 
             List<string> ids = new List<string>();
 
-            if (paper.Matches == null)  
+            if (paper.Matches == null)
             {
                 return new List<PaperInfo>();
             }
 
-            for (int i = 0; i < paper.Matches.Count; i++) {
+            for (int i = 0; i < paper.Matches.Count; i++)
+            {
                 ids.Add(paper.Matches[i].Id);
             }
 
@@ -54,7 +57,7 @@ namespace AiraAPI.Repositories
             {{""ids"": {ids.ToJson()}}}
             ");
 
-            
+
             using HttpResponseMessage httpResponse = await _httpClient.SendAsync(request);
 
             if (httpResponse.StatusCode == (System.Net.HttpStatusCode)429)
@@ -76,7 +79,8 @@ namespace AiraAPI.Repositories
 
             List<string> ids = new List<string>();
 
-            if (paper.Data == null) {
+            if (paper.Data == null)
+            {
                 return new List<PaperInfo>();
             }
 
@@ -102,9 +106,22 @@ namespace AiraAPI.Repositories
 
         public async Task<PaperSearch> SearchPaperAsync(string query)
         {
-            using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"https://api.semanticscholar.org/graph/v1/paper/search?query={query}&offset=0&limit=10");
 
-            using HttpResponseMessage httpResponse = await _httpClient.SendAsync(request);
+            HttpResponseMessage httpResponse = new HttpResponseMessage();
+            while (true)
+            {
+                using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"https://api.semanticscholar.org/graph/v1/paper/search?query={query}&offset=0&limit=10");
+
+                httpResponse = await _httpClient.SendAsync(request);
+
+                if (httpResponse.IsSuccessStatusCode)
+                {
+                    break;
+                }
+                await Task.Delay(3000);
+
+            }
+            
 
             HttpContent response = httpResponse.EnsureSuccessStatusCode().Content;
 

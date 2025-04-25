@@ -1,8 +1,6 @@
 ﻿using AiraAPI.Interfaces;
 using AiraAPI.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Net.Http.Headers;
 using System.Text;
 
 namespace AiraAPI.Repositories
@@ -48,7 +46,10 @@ namespace AiraAPI.Repositories
             }}", Encoding.UTF8, "application/json");
 
             using HttpResponseMessage response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception(await response.Content.ReadAsStringAsync());
+            }
 
             using Stream stream = await response.Content.ReadAsStreamAsync();
             using StreamReader reader = new StreamReader(stream);
@@ -64,9 +65,9 @@ namespace AiraAPI.Repositories
                     { // OpenAI-style end signal
                         OnResponseCompleted?.Invoke();
                         break;
-                    } 
+                    }
 
-                    
+
 
                     Response responseObject = JsonConvert.DeserializeObject<Response>(json);
                     if (responseObject?.Choices != null && responseObject.Choices.Count > 0)
@@ -75,8 +76,8 @@ namespace AiraAPI.Repositories
                         {
                             yield return responseObject.Choices[0].Delta;
                         }
-                        
-                        
+
+
                     }
                 }
             }

@@ -2,7 +2,6 @@
 using AiraAPI.Repositories;
 using FireSharp.Config;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace AiraAPI.Controllers
 {

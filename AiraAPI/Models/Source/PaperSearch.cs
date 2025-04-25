@@ -2,6 +2,6 @@
 {
     public class PaperSearch
     {
-        public List<Data> Data {  get; set; }
+        public List<Data> Data { get; set; }
     }
 }
