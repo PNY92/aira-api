@@ -96,6 +96,7 @@ namespace AiraAPI.Repositories
 
             request.Headers.Add("Authorization", "Bearer " + _apiKey);
 
+            Console.WriteLine(client_message.Content);
             request.Content = new StringContent($@"
             {{
                 ""model"": ""{client_message.Model}"",

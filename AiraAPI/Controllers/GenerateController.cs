@@ -14,7 +14,8 @@ namespace AiraAPI.Controllers
         [HttpPost("generate")]
         public async Task Generate([FromBody] Message chatMessage)
         {
-            chatMessage.Content += "\n\nPlease respond as a research assistant and provide accurate response";
+            JObject configManager = ConfigManager.GetConfiguration();
+            chatMessage.Content += configManager["system_prompts"]["response_to_user"];
 
             Response.Headers.Add("Content-Type", "text/event-stream");
             Response.Headers.Add("Cache-Control", "no-cache");
@@ -22,7 +23,7 @@ namespace AiraAPI.Controllers
 
             var responseStream = Response.Body;
 
-            JObject configManager = ConfigManager.GetConfiguration();
+            
             string key = configManager["openrouter"]["deepseek_v3_api"].ToString();
 
             OpenRouterClient openRouterRepository = new OpenRouterClient(key);
@@ -52,8 +53,9 @@ namespace AiraAPI.Controllers
         [HttpPost("source")]
         public async Task<IActionResult> Source([FromBody] Message chatMessage)
         {
-            chatMessage.Content += "\n\nPlease summarize the user prompt into 3 to 5 keywords so that we can use as search query for Semantic Scholar without comma, it must reflect the whole context of the user prompt";
+            chatMessage.Content += "\n\nExtract 3 to 5 keywords from the user prompt for Semantic Scholar search without commas, strictly limited to 5 words max.";
 
+            Console.WriteLine(chatMessage);
             Response.Headers.Add("Content-Type", "application/json");
             Response.Headers.Add("Cache-Control", "no-cache");
             Response.Headers.Add("Connection", "keep-alive");
@@ -72,5 +74,7 @@ namespace AiraAPI.Controllers
             return Ok(formattedContent);
 
         }
+
+        
     }
 }

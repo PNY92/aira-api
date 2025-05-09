@@ -39,7 +39,7 @@ namespace AiraAPI.Repositories
 
         public async Task<List<PaperInfo>> GetPaperInfoAsync(Paper paper)
         {
-            using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "https://api.semanticscholar.org/graph/v1/paper/batch?fields=title,url,abstract,isOpenAccess,openAccessPdf,authors");
+            using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "https://api.semanticscholar.org/graph/v1/paper/batch?fields=title,url,abstract,isOpenAccess,openAccessPdf,authors,publicationDate,year,publicationVenue,externalIds");
 
             List<string> ids = new List<string>();
 
@@ -75,7 +75,7 @@ namespace AiraAPI.Repositories
 
         public async Task<List<PaperInfo>> GetPaperInfoAsync(PaperSearch paper)
         {
-            using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "https://api.semanticscholar.org/graph/v1/paper/batch?fields=title,url,abstract,isOpenAccess,openAccessPdf,authors");
+            using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "https://api.semanticscholar.org/graph/v1/paper/batch?fields=title,url,abstract,isOpenAccess,openAccessPdf,authors,publicationDate,year,publicationVenue,externalIds");
 
             List<string> ids = new List<string>();
 
@@ -97,6 +97,8 @@ namespace AiraAPI.Repositories
             using HttpResponseMessage httpResponse = await _httpClient.SendAsync(request);
 
             HttpContent response = httpResponse.EnsureSuccessStatusCode().Content;
+
+            Console.WriteLine(response.ReadAsStringAsync().Result);
 
 
             List<PaperInfo> paperInfo = JsonConvert.DeserializeObject<List<PaperInfo>>(response.ReadAsStringAsync().Result);
