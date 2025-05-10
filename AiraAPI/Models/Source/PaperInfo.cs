@@ -3,6 +3,11 @@
 namespace AiraAPI.Models.Source
 {
 
+    public class Author
+    {
+        public string Name { get; set; }
+    }
+
     public class ExternalIds
     {
         public string DOI { get; set; }
@@ -29,5 +34,7 @@ namespace AiraAPI.Models.Source
         public ExternalIds? ExternalIds { get; set; }
 
         public Venue? PublicationVenue { get; set; }
+
+        public Author[]? Authors { get; set; }
     }
 }
