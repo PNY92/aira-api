@@ -30,5 +30,32 @@ namespace AiraAPI.Repositories
 
             return jObject;
         }
+
+        public static void SetSystemPrompt(string prompt)
+        {
+
+            if (Path.Exists("config-dev.json"))
+            {
+                string jsonString = File.ReadAllText(_filePath_dev);
+                JObject? jObject = JsonConvert.DeserializeObject<dynamic>(jsonString);
+
+                jObject["system_prompts"]["response_to_user"] = prompt;
+
+                string stringified = JsonConvert.SerializeObject(jObject);
+
+                File.WriteAllText(_filePath_dev, stringified);
+            }
+            else if (Path.Exists("config.json"))
+            {
+                string jsonString = File.ReadAllText(_filePath);
+                JObject? jObject = JsonConvert.DeserializeObject<dynamic>(jsonString);
+
+                jObject["system_prompts"]["response_to_user"] = prompt;
+
+                string stringified = JsonConvert.SerializeObject(jObject);
+
+                File.WriteAllText(_filePath, stringified);
+            }
+        }
     }
 }

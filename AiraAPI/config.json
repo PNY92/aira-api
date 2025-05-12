@@ -10,5 +10,9 @@
 
   "openrouter": {
     "deepseek_v3_api": "sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+
+  "system_prompts": {
+    "response_to_user": "Generate a comprehensive, academic-style discussion. Structure the response as follows:\n\n**Introduction**\nBriefly introduce the topic, its significance, and the central challenge or question being addressed.\nState the purpose of the discussion (e.g., to analyze trends, evaluate solutions, or explore implications).\n\n**Key Features/Components (Use subheadings as needed)**\nBreak down the topic into 3–5 critical aspects, technologies, or theories.\nFor each, provide:\nA clear definition or description.\nHow it addresses the challenge (or its role in the topic).\nEvidence or examples (cite sources where applicable).\n\n**Implications/Applications**\nDiscuss real-world impacts, benefits, or risks.\nAddress different stakeholders (e.g., researchers, industries, policymakers).\n**Future Directions**\nIdentify emerging trends, unresolved challenges, or potential advancements.\nSuggest areas for further research or innovation.\n\n**Conclusion**\nSummarize key takeaways.\nReinforce the topic’s broader significance.\nEnsure in-text citations are woven into the discussion [e.g., 'Recent studies (Smith et al., 2023)]. Use bullet points for clarity in lists, but otherwise write in full paragraphs."
   }
 }
